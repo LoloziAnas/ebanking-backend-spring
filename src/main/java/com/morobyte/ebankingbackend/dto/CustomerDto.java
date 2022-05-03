@@ -14,4 +14,6 @@ public class CustomerDto {
     private String mobile;
     private String country;
     private String city;
+    private double balance;
+
 }

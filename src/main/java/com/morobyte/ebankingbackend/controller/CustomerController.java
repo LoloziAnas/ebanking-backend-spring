@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("api/customers")
+@RequestMapping("/api/customers")
 public class CustomerController {
     private final ICustomerService customerService;
     private final ModelMapper modelMapper;
@@ -31,6 +31,14 @@ public class CustomerController {
         return customerService.getCustomers().stream().map(this::convertToDto).collect(Collectors.toList());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<CustomerDto> getCustomer(@PathVariable(name = "id") long id) throws ResourceNotFoundException {
+        Customer customer = customerService.getCustomer(id);
+        CustomerDto customerDto = convertToDto(customer);
+        return ResponseEntity.ok(customerDto);
+    }
+    /* https://www.linkedin.com/in/lolozianas/ */
+
     @PostMapping("/create")
     public ResponseEntity<CustomerDto> createCustomer(@RequestBody @Valid CustomerDto customerDto) throws ResourceNotFoundException {
         // Convert to Customer Entity
@@ -41,12 +49,24 @@ public class CustomerController {
         return new ResponseEntity<>(customerResponse, HttpStatus.CREATED);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<CustomerDto> updateUser(@PathVariable(name = "id") long id, @RequestBody @Valid CustomerDto customerDto) throws ResourceNotFoundException {
+        Customer customer1 = convertToEntity(customerDto);
+        Customer customer = customerService.updateCustomer(customer1, id);
+        CustomerDto userResponse = convertToDto(customer);
+        return ResponseEntity.ok(userResponse);
+    }
 
-    private CustomerDto convertToDto(Customer customer) {
+    @DeleteMapping("{id}")
+    public void deleteCustomer(@PathVariable(name = "id") long id) throws ResourceNotFoundException {
+        customerService.deleteCustomer(id);
+    }
+
+    public CustomerDto convertToDto(Customer customer) {
         return modelMapper.map(customer, CustomerDto.class);
     }
 
-    private Customer convertToEntity(CustomerDto customerDto) {
+    public Customer convertToEntity(CustomerDto customerDto) {
         return modelMapper.map(customerDto, Customer.class);
     }
 }
