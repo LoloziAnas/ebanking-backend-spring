@@ -40,7 +40,7 @@ public class CustomerController {
     /* https://www.linkedin.com/in/lolozianas/ */
 
     @PostMapping("/create")
-    public ResponseEntity<CustomerDto> createCustomer(@RequestBody @Valid CustomerDto customerDto) throws ResourceNotFoundException {
+    public ResponseEntity<CustomerDto> createCustomer(@RequestBody CustomerDto customerDto) throws ResourceNotFoundException {
         // Convert to Customer Entity
         Customer customer = convertToEntity(customerDto);
         Customer customerCreated = customerService.createCustomer(customer);

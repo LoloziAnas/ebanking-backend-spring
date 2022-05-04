@@ -9,12 +9,18 @@ import com.morobyte.ebankingbackend.enums.OperationType;
 import com.morobyte.ebankingbackend.repository.AccountOperationRepository;
 import com.morobyte.ebankingbackend.repository.BankAccountRepository;
 import com.morobyte.ebankingbackend.repository.CustomerRepository;
+import com.morobyte.ebankingbackend.sec.entity.AppRole;
+import com.morobyte.ebankingbackend.sec.entity.AppUser;
+import com.morobyte.ebankingbackend.sec.service.IAccountService;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.stream.Stream;
 
@@ -22,9 +28,14 @@ import java.util.stream.Stream;
 public class EbankingBackendApplication {
 
     @Bean
-    public ModelMapper modelMapper(){
+    public ModelMapper modelMapper() {
         return new ModelMapper();
     }
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
+
     public static void main(String[] args) {
         SpringApplication.run(EbankingBackendApplication.class, args);
     }
@@ -69,6 +80,28 @@ public class EbankingBackendApplication {
                     accountOperationRepository.save(accountOperation);
                 }
             });
+        };
+    }
+
+    @Bean
+    CommandLineRunner st(IAccountService accountService) {
+        return args -> {
+            accountService.addRole(new AppRole(null, "USER"));
+            accountService.addRole(new AppRole(null, "ADMIN"));
+            accountService.addRole(new AppRole(null, "MANAGER"));
+
+            accountService.addUser(new AppUser(null, "user1", "123", new ArrayList<>()));
+            accountService.addUser(new AppUser(null, "admin", "123", new ArrayList<>()));
+            accountService.addUser(new AppUser(null, "user2", "123", new ArrayList<>()));
+            accountService.addUser(new AppUser(null, "user3", "123", new ArrayList<>()));
+
+            accountService.addRoleToUser("user1", "USER");
+            accountService.addRoleToUser("admin", "ADMIN");
+            accountService.addRoleToUser("user2", "USER");
+            accountService.addRoleToUser("user2", "MANAGER");
+            accountService.addRoleToUser("user3", "MANAGER");
+            accountService.addRoleToUser("user3", "ADMIN");
+
         };
     }
 }
