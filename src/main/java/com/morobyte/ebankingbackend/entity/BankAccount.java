@@ -33,4 +33,5 @@ public class BankAccount {
     private Customer customer;
     @OneToMany(mappedBy = "bankAccount")
     private List<AccountOperation> accountOperations;
+    private String description;
 }
