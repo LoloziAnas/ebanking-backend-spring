@@ -4,6 +4,7 @@ import com.morobyte.ebankingbackend.dto.CustomerDto;
 import com.morobyte.ebankingbackend.entity.Customer;
 import com.morobyte.ebankingbackend.exception.ResourceNotFoundException;
 import com.morobyte.ebankingbackend.service.ICustomerService;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/customers")
+@Slf4j
 public class CustomerController {
     private final ICustomerService customerService;
     private final ModelMapper modelMapper;
@@ -26,12 +27,12 @@ public class CustomerController {
         this.modelMapper = modelMapper;
     }
 
-    @GetMapping
+    @GetMapping("/customers")
     public List<CustomerDto> getCustomers() {
         return customerService.getCustomers().stream().map(this::convertToDto).collect(Collectors.toList());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/customers/{id}")
     public ResponseEntity<CustomerDto> getCustomer(@PathVariable(name = "id") long id) throws ResourceNotFoundException {
         Customer customer = customerService.getCustomer(id);
         CustomerDto customerDto = convertToDto(customer);
@@ -39,7 +40,7 @@ public class CustomerController {
     }
     /* https://www.linkedin.com/in/lolozianas/ */
 
-    @PostMapping("/create")
+    @PostMapping("/customers")
     public ResponseEntity<CustomerDto> createCustomer(@RequestBody CustomerDto customerDto) throws ResourceNotFoundException {
         // Convert to Customer Entity
         Customer customer = convertToEntity(customerDto);
@@ -49,7 +50,7 @@ public class CustomerController {
         return new ResponseEntity<>(customerResponse, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/customers/{id}")
     public ResponseEntity<CustomerDto> updateUser(@PathVariable(name = "id") long id, @RequestBody @Valid CustomerDto customerDto) throws ResourceNotFoundException {
         Customer customer1 = convertToEntity(customerDto);
         Customer customer = customerService.updateCustomer(customer1, id);
@@ -57,7 +58,7 @@ public class CustomerController {
         return ResponseEntity.ok(userResponse);
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/customers/{id}")
     public void deleteCustomer(@PathVariable(name = "id") long id) throws ResourceNotFoundException {
         customerService.deleteCustomer(id);
     }
