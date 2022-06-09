@@ -6,6 +6,7 @@ import com.morobyte.ebankingbackend.exception.ResourceNotFoundException;
 import com.morobyte.ebankingbackend.service.ICustomerService;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,7 @@ public class CustomerController {
     public CustomerController(ICustomerService customerService, ModelMapper modelMapper) {
         this.customerService = customerService;
         this.modelMapper = modelMapper;
+
     }
 
     @GetMapping("/customers")
@@ -71,3 +73,5 @@ public class CustomerController {
         return modelMapper.map(customerDto, Customer.class);
     }
 }
+
+
